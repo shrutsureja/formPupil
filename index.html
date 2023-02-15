@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Project</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body{
+            background-color: whitesmoke;
+        }
+        .center {
+            text-align: center;
+        }
+
+        .formBox {
+            margin: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            border-style: solid;
+            border-collapse: collapse;
+            border-width: 3px;
+            margin-left: 30%;
+            margin-right: 30%;
+        }
+
+        .formElements {
+            margin: 5px;
+            padding: 5px;
+
+        }
+
+        button{
+            padding: 5px;
+            border-radius: 10px;
+            background-color: grey;
+
+        }
+
+        /* table */
+
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 30px auto;
+        }
+        
+        table,
+        th,
+        td {
+            border: 2px solid;
+            padding: 4px;
+        }
+        
+        th {
+            font-size: 16px;
+            font-weight: 600;
+            background-color: grey;
+        }
+
+
+        td {
+            font-size: 10px;
+            font-weight: 300;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="center ">
+        <form id="form" class="formBox">
+            <div class="formElements">
+                <label for="name">Name</label>
+                <input required type="text" id="name" name="name">
+            </div>
+
+            <div class="formElements">
+
+                <label for="email">Email</label>
+                <input required type="email" id="email" name="email">
+            </div>
+
+            <div class="formElements">
+
+                <label for="password">Password</label>
+                <input required type="password" id="password" name="password">
+            </div>
+
+            <div class="formElements">
+
+                <label for="dob">Date of Birth</label>
+                <input required type="date" id="dob" name="dob" min="18 years ago" max="55 years ago">
+            </div>
+
+            <div class="formElements">
+
+                <input required type="checkbox" id="terms" name="terms">
+                <label for="terms">Accept Terms & Conditions</label>
+            </div>
+
+            <div class="formElements">
+                <button type="submit" id ="submit">Submit</button>
+
+            </div>
+        </form>
+    </div>
+    <div id="error"></div>
+    <div class="center">
+        <h2>Entries</h2>
+        <table id="mytable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Dob</th>
+                    <th>Accepted terms?</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script>
+        document.querySelector("#form").addEventListener("submit", function (event)
+            {
+                event.preventDefault();
+                const dob = new Date(document.querySelector("#dob").value);
+                const today = new Date();
+                const age = today.getFullYear() - dob.getFullYear();
+                if (age < 18 || age > 55)
+                {
+                    alert("Age has to in range of 18 and 55 years.");
+                    return false;
+                }
+
+                const name = document.querySelector("#name").value;
+                const email = document.querySelector("#email").value;
+                const password = document.querySelector("#password").value;
+                const terms = document.querySelector("#terms").checked;
+
+                const registrations = JSON.parse(localStorage.getItem("shrut")) || [];
+                registrations.push({ name, email, password, dob: dob.toLocaleDateString(), terms });
+                localStorage.setItem("shrut", JSON.stringify(registrations));
+
+                const table = document.querySelector("#mytable tbody");
+                table.innerHTML = "";
+                registrations.forEach(registration =>
+                {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${registration.name}</td>
+                        <td>${registration.email}</td>
+                        <td>${registration.password}</td>
+                        <td>${registration.dob}</td>
+                        <td>${registration.terms}</td>
+                        `;
+                    table.appendChild(row);
+                });
+
+                document.querySelector("form").reset();
+            });
+        window.addEventListener("load", function ()
+            {
+                const registrations = JSON.parse(localStorage.getItem("shrut")) || [];
+                const table = document.querySelector("#mytable tbody");
+                registrations.forEach(registration =>
+                {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${registration.name}</td>
+                        <td>${registration.email}</td>
+                        <td>${registration.password}</td>
+                        <td>${registration.dob}</td>
+                        <td>${registration.terms}</td>
+                        `;
+                    table.appendChild(row);
+                });
+            });
+    </script>
+</body>
+
+</html>
